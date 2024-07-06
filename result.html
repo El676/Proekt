@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Результаты поиска</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Результаты поиска</h1>
+        <form action="/search" method="get" class="search-form">
+            <input type="text" name="search" placeholder="Search by title" value="{{ request.args.get('search', '') }}" class="search-input">
+            <input type="text" name="city" placeholder="Filter by city" value="{{ request.args.get('city', '') }}" class="filter-input">
+            <input type="text" name="company" placeholder="Filter by company" value="{{ request.args.get('company', '') }}" class="filter-input">
+            <button type="submit" class="search-button">Search</button>
+        </form>
+        <div class="vacancies-grid">
+            {% for vacancy in vacancies %}
+                <div class="vacancy-card">
+                    <h2>{{ vacancy.title }}</h2>
+                    <p><strong>Компания:</strong> {{ vacancy.company }}</p>
+                    <p><strong>Город:</strong> {{ vacancy.city }}</p>
+                    <p><strong>Зарплата:</strong> 
+                        {% if vacancy.salary_from and vacancy.salary_to %}
+                            {{ vacancy.salary_from }} - {{ vacancy.salary_to }} {{ vacancy.currency }}
+                        {% elif vacancy.salary_from %}
+                            {{ vacancy.salary_from }} {{ vacancy.currency }}
+                        {% elif vacancy.salary_to %}
+                            {{ vacancy.salary_to }} {{ vacancy.currency }}
+                        {% else %}
+                            Нет данных о зарплате
+                        {% endif %}
+                    </p>
+                </div>
+            {% else %}
+                <p>Вакансий не найдено</p>
+            {% endfor %}
+        </div>
+        <a href="/" class="back-link">Вернуться ко всем вакансиям</a>
+    </div>
+</body>
+</html>
